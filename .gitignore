@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+
+# Streamlit
+.streamlit/secrets.toml
+
+# IDE and OS
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Large/raw datasets
+data/student_burnout_cleaned_full.csv
+student_burnout_cleaned_full*.csv
+student_mental_health_burnout_1M.csv
+
+# Notebook checkpoints
+.ipynb_checkpoints/
