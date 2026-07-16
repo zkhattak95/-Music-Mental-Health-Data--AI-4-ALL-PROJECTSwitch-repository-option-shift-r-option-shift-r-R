@@ -1,0 +1,32 @@
+{
+  "model": "RandomForestClassifier",
+  "training_sample_rows": 124064,
+  "testing_rows": 31016,
+  "accuracy": 0.8041011091049781,
+  "macro_f1": 0.755359301805779,
+  "high_risk_recall": 0.7951,
+  "features": [
+    "age",
+    "gender",
+    "academic_year",
+    "study_hours_per_day",
+    "exam_pressure",
+    "academic_performance",
+    "stress_level",
+    "anxiety_score",
+    "depression_score",
+    "sleep_hours",
+    "physical_activity",
+    "social_support",
+    "screen_time",
+    "internet_usage",
+    "financial_stress",
+    "family_expectation"
+  ],
+  "excluded_leakage_columns": [
+    "burnout_score",
+    "mental_health_index",
+    "dropout_risk",
+    "risk_level_encoded"
+  ]
+}
