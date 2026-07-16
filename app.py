@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-import json
+import textwrap
 
 import joblib
 import pandas as pd
@@ -17,6 +17,9 @@ MUSIC_PATH = ROOT / "data" / "music_survey_cleaned.csv"
 BURNOUT_SAMPLE_PATH = ROOT / "data" / "burnout_dashboard_sample.csv"
 CSS_PATH = ROOT / "assets" / "styles.css"
 
+RISK_COLORS = {"Low": "#0F766E", "Medium": "#B45309", "High": "#B42318"}
+CHART_SEQUENCE = ["#2563EB", "#0F766E", "#B45309", "#7C3AED", "#0EA5E9", "#B42318"]
+
 
 st.set_page_config(
     page_title="Mind & Melody",
@@ -29,6 +32,43 @@ st.set_page_config(
 def load_css() -> None:
     if CSS_PATH.exists():
         st.markdown(f"<style>{CSS_PATH.read_text(encoding='utf-8')}</style>", unsafe_allow_html=True)
+
+
+def html(markup: str) -> None:
+    """Render presentation HTML safely.
+
+    textwrap.dedent removes the common leading indentation so multiline markup
+    can never be parsed as a Markdown indented code block (4+ leading spaces),
+    which is what previously caused raw <div>/<h1> tags to display as text.
+    """
+    st.markdown(textwrap.dedent(markup).strip(), unsafe_allow_html=True)
+
+
+def page_header(kicker: str, title: str, subtitle: str) -> None:
+    html(
+        f"""
+        <header class="page-header">
+            <span class="kicker">{kicker}</span>
+            <h1 class="page-title">{title}</h1>
+            <p class="page-subtitle">{subtitle}</p>
+        </header>
+        """
+    )
+
+
+def apply_chart_theme(fig, *, showlegend: bool = False):
+    """Presentation-only theming shared by every chart for a consistent look."""
+    fig.update_layout(
+        template="plotly_white",
+        font=dict(family="sans-serif", color="#10233F", size=13),
+        title=dict(font=dict(size=16, color="#0B1F3A")),
+        margin=dict(l=10, r=10, t=48, b=10),
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        showlegend=showlegend,
+        colorway=CHART_SEQUENCE,
+    )
+    return fig
 
 
 @st.cache_resource
@@ -53,73 +93,95 @@ def load_burnout_sample() -> pd.DataFrame:
 
 
 def render_disclaimer() -> None:
-    st.markdown(
+    html(
         """
         <div class="disclaimer">
-        <strong>Important:</strong> Mind & Melody is an educational wellness project.
+        <strong>Important:</strong> Mind &amp; Melody is an educational wellness project.
         It does not diagnose burnout or any mental-health condition, and it is not a
         substitute for professional support. The app does not save your check-in answers.
         </div>
-        """,
-        unsafe_allow_html=True,
+        """
     )
 
 
 def home_page() -> None:
-    st.markdown(
+    html(
         """
         <section class="hero">
             <span class="hero-kicker">AI4ALL Group 11C</span>
-            <h1>Mind & Melody</h1>
+            <h1>Mind &amp; Melody</h1>
             <p>
                 A student-centered wellness experience that combines a burnout-risk
                 classifier, practical check-in guidance, and data-informed music
                 recommendations in one calm, private interface.
             </p>
         </section>
-        """,
-        unsafe_allow_html=True,
+        """
     )
 
     col1, col2, col3 = st.columns(3)
     cards = [
         (
             col1,
-            "🧭 Burnout Check-In",
+            "Assess",
+            "Burnout Check-In",
             "Estimate a low, medium, or high burnout-risk pattern from lifestyle and academic inputs."
         ),
         (
             col2,
-            "🎵 Music Support",
+            "Support",
+            "Music Support",
             "Explore genres frequently reported by survey participants who said music improved their wellbeing."
         ),
         (
             col3,
-            "📊 Data Insights",
+            "Explore",
+            "Data Insights",
             "View clear visual summaries of student burnout and music-and-mental-health survey patterns."
         ),
     ]
 
-    for column, title, copy in cards:
+    for column, tag, title, copy in cards:
         with column:
-            st.markdown(
-                f'<div class="card"><h3>{title}</h3><p>{copy}</p></div>',
-                unsafe_allow_html=True,
+            html(
+                f"""
+                <div class="card">
+                    <span class="card-tag">{tag}</span>
+                    <h3>{title}</h3>
+                    <p>{copy}</p>
+                </div>
+                """
             )
 
-    st.markdown("## How it works")
-    st.write(
-        "Complete a private check-in, review the model's pattern-based estimate, "
-        "and explore supportive next steps and music ideas. No account is required."
-    )
+    html('<h2 class="block-title">How it works</h2>')
+    steps = [
+        ("1", "Check in privately", "Answer a short set of lifestyle and academic questions. No account is required."),
+        ("2", "Review the estimate", "See a pattern-based burnout-risk category with the model's confidence."),
+        ("3", "Explore next steps", "Get supportive suggestions and data-informed music ideas to try."),
+    ]
+    step_cols = st.columns(3)
+    for column, (num, title, copy) in zip(step_cols, steps):
+        with column:
+            html(
+                f"""
+                <div class="step">
+                    <span class="step-num">{num}</span>
+                    <div class="step-body">
+                        <h4>{title}</h4>
+                        <p>{copy}</p>
+                    </div>
+                </div>
+                """
+            )
+
     render_disclaimer()
 
 
 def burnout_page() -> None:
-    st.markdown('<h1 class="section-title">Burnout Check-In</h1>', unsafe_allow_html=True)
-    st.markdown(
-        '<p class="section-copy">Answer based on your recent routine. The model uses patterns from a cleaned student burnout dataset.</p>',
-        unsafe_allow_html=True,
+    page_header(
+        "Check-In",
+        "Burnout Check-In",
+        "Answer based on your recent routine. The model uses patterns from a cleaned student burnout dataset.",
     )
 
     model = load_model()
@@ -187,7 +249,7 @@ def burnout_page() -> None:
         "High": "risk-high",
     }.get(predicted_risk, "")
 
-    st.markdown(
+    html(
         f"""
         <div class="risk-box {risk_class}">
             <span class="pill">Pattern-based estimate</span>
@@ -197,8 +259,7 @@ def burnout_page() -> None:
                 Confidence is not the same as a diagnosis or certainty.
             </p>
         </div>
-        """,
-        unsafe_allow_html=True,
+        """
     )
 
     probability_df = pd.DataFrame(
@@ -214,9 +275,11 @@ def burnout_page() -> None:
         y="Probability",
         text_auto=".0%",
         title="Model probability by category",
+        color="Risk level",
+        color_discrete_map=RISK_COLORS,
     )
-    chart.update_layout(yaxis_tickformat=".0%", showlegend=False)
-    st.plotly_chart(chart, use_container_width=True)
+    chart.update_layout(yaxis_tickformat=".0%")
+    st.plotly_chart(apply_chart_theme(chart), use_container_width=True)
 
     st.subheader("Supportive next steps")
     for tip in wellness_tips(row):
@@ -233,10 +296,10 @@ def burnout_page() -> None:
 
 
 def music_page() -> None:
-    st.markdown('<h1 class="section-title">Music Support</h1>', unsafe_allow_html=True)
-    st.markdown(
-        '<p class="section-copy">Discover a small, data-informed starting point for your next playlist.</p>',
-        unsafe_allow_html=True,
+    page_header(
+        "Music",
+        "Music Support",
+        "Discover a small, data-informed starting point for your next playlist.",
     )
 
     music = load_music_data()
@@ -264,9 +327,14 @@ def music_page() -> None:
         genre_cols = st.columns(len(result["genres"]))
         for column, genre in zip(genre_cols, result["genres"]):
             with column:
-                st.markdown(
-                    f'<div class="card"><h3>🎧 {genre}</h3><p>Add a few familiar tracks first, then explore gradually.</p></div>',
-                    unsafe_allow_html=True,
+                html(
+                    f"""
+                    <div class="card">
+                        <span class="card-tag">Genre</span>
+                        <h3>{genre}</h3>
+                        <p>Add a few familiar tracks first, then explore gradually.</p>
+                    </div>
+                    """
                 )
 
         st.markdown("### Listening approach")
@@ -286,10 +354,10 @@ def music_page() -> None:
 
 
 def insights_page() -> None:
-    st.markdown('<h1 class="section-title">Data Insights</h1>', unsafe_allow_html=True)
-    st.markdown(
-        '<p class="section-copy">Explore high-level patterns from the two project datasets.</p>',
-        unsafe_allow_html=True,
+    page_header(
+        "Insights",
+        "Data Insights",
+        "Explore high-level patterns from the two project datasets.",
     )
 
     burnout = load_burnout_sample()
@@ -308,7 +376,16 @@ def insights_page() -> None:
 
             risk_counts = burnout["risk_level"].value_counts().rename_axis("Risk level").reset_index(name="Students")
             st.plotly_chart(
-                px.bar(risk_counts, x="Risk level", y="Students", title="Burnout-risk distribution"),
+                apply_chart_theme(
+                    px.bar(
+                        risk_counts,
+                        x="Risk level",
+                        y="Students",
+                        title="Burnout-risk distribution",
+                        color="Risk level",
+                        color_discrete_map=RISK_COLORS,
+                    )
+                ),
                 use_container_width=True,
             )
 
@@ -318,22 +395,30 @@ def insights_page() -> None:
                 .rename(columns={"sleep_hours": "Average sleep hours"})
             )
             st.plotly_chart(
-                px.bar(
-                    sleep_by_risk,
-                    x="risk_level",
-                    y="Average sleep hours",
-                    title="Average sleep hours by burnout-risk level",
+                apply_chart_theme(
+                    px.bar(
+                        sleep_by_risk,
+                        x="risk_level",
+                        y="Average sleep hours",
+                        title="Average sleep hours by burnout-risk level",
+                        color="risk_level",
+                        color_discrete_map=RISK_COLORS,
+                    )
                 ),
                 use_container_width=True,
             )
 
             st.plotly_chart(
-                px.box(
-                    burnout.sample(min(8000, len(burnout)), random_state=42),
-                    x="risk_level",
-                    y="stress_level",
-                    title="Stress distribution by burnout-risk level",
-                    points=False,
+                apply_chart_theme(
+                    px.box(
+                        burnout.sample(min(8000, len(burnout)), random_state=42),
+                        x="risk_level",
+                        y="stress_level",
+                        title="Stress distribution by burnout-risk level",
+                        points=False,
+                        color="risk_level",
+                        color_discrete_map=RISK_COLORS,
+                    )
                 ),
                 use_container_width=True,
             )
@@ -354,34 +439,39 @@ def insights_page() -> None:
                 .reset_index(name="Respondents")
             )
             st.plotly_chart(
-                px.bar(
-                    fav,
-                    x="Respondents",
-                    y="Favorite genre",
-                    orientation="h",
-                    title="Ten most common favorite genres",
+                apply_chart_theme(
+                    px.bar(
+                        fav,
+                        x="Respondents",
+                        y="Favorite genre",
+                        orientation="h",
+                        title="Ten most common favorite genres",
+                    )
                 ),
                 use_container_width=True,
             )
 
             effects = music["music_effects"].value_counts().rename_axis("Reported effect").reset_index(name="Respondents")
             st.plotly_chart(
-                px.pie(
-                    effects,
-                    names="Reported effect",
-                    values="Respondents",
-                    hole=0.55,
-                    title="Self-reported effect of music",
+                apply_chart_theme(
+                    px.pie(
+                        effects,
+                        names="Reported effect",
+                        values="Respondents",
+                        hole=0.55,
+                        title="Self-reported effect of music",
+                    ),
+                    showlegend=True,
                 ),
                 use_container_width=True,
             )
 
 
 def about_page() -> None:
-    st.markdown('<h1 class="section-title">About the Project</h1>', unsafe_allow_html=True)
-    st.markdown(
-        '<p class="section-copy">Mind & Melody was developed as an AI4ALL Group 11C capstone project.</p>',
-        unsafe_allow_html=True,
+    page_header(
+        "About",
+        "About the Project",
+        "Mind & Melody was developed as an AI4ALL Group 11C capstone project.",
     )
 
     st.subheader("Project team")
@@ -394,7 +484,7 @@ def about_page() -> None:
         "Sahasra Kothembaka",
     ]
     members = "".join(f'<div class="team-member">{name}</div>' for name in team)
-    st.markdown(f'<div class="team-grid">{members}</div>', unsafe_allow_html=True)
+    html(f'<div class="team-grid">{members}</div>')
 
     st.subheader("Model approach")
     st.write(
@@ -425,8 +515,18 @@ def about_page() -> None:
 load_css()
 
 with st.sidebar:
-    st.markdown("## 🎧 Mind & Melody")
-    st.caption("Student wellness through data and music")
+    html(
+        """
+        <div class="brand">
+            <span class="brand-mark">🎧</span>
+            <div class="brand-text">
+                <span class="brand-name">Mind &amp; Melody</span>
+                <span class="brand-tagline">Student wellness through data and music</span>
+            </div>
+        </div>
+        """
+    )
+    st.markdown('<p class="nav-label">Navigate</p>', unsafe_allow_html=True)
     page = st.radio(
         "Navigate",
         ["Home", "Burnout Check-In", "Music Support", "Data Insights", "About & Safety"],

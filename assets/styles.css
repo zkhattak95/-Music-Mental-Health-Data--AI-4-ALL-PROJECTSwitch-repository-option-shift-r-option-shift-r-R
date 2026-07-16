@@ -1,4 +1,3 @@
-
 :root {
     --navy: #0B1F3A;
     --blue: #2563EB;
@@ -10,6 +9,8 @@
     --success: #0F766E;
     --warning: #B45309;
     --danger: #B42318;
+    --radius: 18px;
+    --shadow: 0 10px 28px rgba(21, 60, 116, .07);
 }
 
 .block-container {
@@ -18,66 +19,167 @@
     padding-bottom: 3rem;
 }
 
+/* ---- Sidebar ---- */
 [data-testid="stSidebar"] {
     background: linear-gradient(180deg, #0B1F3A 0%, #153C74 100%);
 }
 
 [data-testid="stSidebar"] * {
-    color: white;
+    color: #FFFFFF;
 }
 
+.brand {
+    display: flex;
+    align-items: center;
+    gap: .7rem;
+    padding: .4rem 0 1rem;
+}
+
+.brand-mark {
+    font-size: 1.6rem;
+    line-height: 1;
+}
+
+.brand-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.brand-name {
+    font-weight: 700;
+    font-size: 1.15rem;
+    letter-spacing: .01em;
+}
+
+.brand-tagline {
+    font-size: .8rem;
+    color: rgba(255, 255, 255, .78) !important;
+    line-height: 1.35;
+}
+
+.nav-label {
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    font-size: .72rem;
+    font-weight: 700;
+    color: rgba(255, 255, 255, .65) !important;
+    margin: .2rem 0 .1rem;
+}
+
+/* Keyboard focus visibility for the nav radio */
+[data-testid="stSidebar"] [role="radiogroup"] label:focus-within {
+    outline: 2px solid var(--sky);
+    outline-offset: 2px;
+    border-radius: 8px;
+}
+
+/* ---- Hero (Home) ---- */
 .hero {
-    padding: 3.4rem 3rem;
-    border-radius: 28px;
+    padding: 2.6rem 2.4rem;
+    border-radius: 26px;
     background:
-        radial-gradient(circle at 90% 20%, rgba(96,165,250,.35), transparent 34%),
+        radial-gradient(circle at 90% 20%, rgba(96, 165, 250, .35), transparent 34%),
         linear-gradient(135deg, #0B1F3A 0%, #1D4ED8 100%);
-    color: white;
+    color: #FFFFFF;
     box-shadow: 0 18px 45px rgba(17, 63, 126, .18);
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.6rem;
 }
 
 .hero-kicker {
     display: inline-block;
-    padding: .38rem .75rem;
+    padding: .34rem .72rem;
     border-radius: 999px;
-    background: rgba(255,255,255,.14);
-    border: 1px solid rgba(255,255,255,.25);
-    font-size: .82rem;
+    background: rgba(255, 255, 255, .14);
+    border: 1px solid rgba(255, 255, 255, .25);
+    font-size: .78rem;
     font-weight: 700;
-    letter-spacing: .04em;
+    letter-spacing: .05em;
     text-transform: uppercase;
-    margin-bottom: 1rem;
+    margin-bottom: .9rem;
 }
 
 .hero h1 {
-    font-size: clamp(2.2rem, 5vw, 4.2rem);
-    line-height: 1.02;
-    margin: 0 0 1rem 0;
-    color: white;
+    font-size: clamp(1.9rem, 3.6vw, 2.7rem);
+    line-height: 1.12;
+    margin: 0 0 .8rem 0;
+    color: #FFFFFF;
 }
 
 .hero p {
-    max-width: 760px;
-    font-size: 1.1rem;
-    line-height: 1.7;
-    color: rgba(255,255,255,.9);
+    max-width: 720px;
+    font-size: 1.02rem;
+    line-height: 1.65;
+    color: rgba(255, 255, 255, .9);
     margin: 0;
 }
 
+/* ---- Page headers (all non-home pages) ---- */
+.page-header {
+    margin: .4rem 0 1.4rem;
+}
+
+.kicker {
+    display: inline-block;
+    padding: .28rem .65rem;
+    border-radius: 999px;
+    background: var(--blue-light);
+    color: var(--blue);
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    margin-bottom: .6rem;
+}
+
+.page-title {
+    color: var(--navy);
+    font-size: clamp(1.6rem, 2.6vw, 2.1rem);
+    line-height: 1.15;
+    margin: 0 0 .35rem;
+}
+
+.page-subtitle {
+    color: var(--muted);
+    font-size: 1rem;
+    line-height: 1.6;
+    max-width: 720px;
+    margin: 0;
+}
+
+.block-title {
+    color: var(--navy);
+    font-size: 1.3rem;
+    margin: 1.8rem 0 1rem;
+}
+
+/* ---- Feature cards ---- */
 .card {
-    background: white;
+    background: var(--white);
     border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 1.35rem;
-    min-height: 165px;
-    box-shadow: 0 10px 28px rgba(21, 60, 116, .07);
+    border-radius: var(--radius);
+    padding: 1.3rem;
+    height: 100%;
+    min-height: 168px;
+    box-shadow: var(--shadow);
+}
+
+.card-tag {
+    display: inline-block;
+    padding: .2rem .55rem;
+    border-radius: 6px;
+    background: var(--blue-light);
+    color: var(--blue);
+    font-size: .68rem;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    margin-bottom: .6rem;
 }
 
 .card h3 {
     color: var(--navy);
-    margin-top: 0;
-    margin-bottom: .55rem;
+    font-size: 1.15rem;
+    margin: 0 0 .5rem;
 }
 
 .card p {
@@ -86,6 +188,46 @@
     margin-bottom: 0;
 }
 
+/* ---- How-it-works steps ---- */
+.step {
+    display: flex;
+    gap: .85rem;
+    align-items: flex-start;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.15rem 1.2rem;
+    height: 100%;
+    box-shadow: var(--shadow);
+}
+
+.step-num {
+    flex: 0 0 auto;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background: var(--blue);
+    color: #FFFFFF;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.step-body h4 {
+    color: var(--navy);
+    font-size: 1rem;
+    margin: .1rem 0 .35rem;
+}
+
+.step-body p {
+    color: var(--muted);
+    font-size: .92rem;
+    line-height: 1.55;
+    margin: 0;
+}
+
+/* ---- Section titles (legacy hooks kept for compatibility) ---- */
 .section-title {
     color: var(--navy);
     margin-top: 1.2rem;
@@ -97,62 +239,81 @@
     margin-bottom: 1.3rem;
 }
 
+/* ---- Risk result box ---- */
 .risk-box {
-    border-radius: 22px;
+    border-radius: 20px;
     padding: 1.4rem 1.5rem;
     margin: 1rem 0;
     border: 1px solid var(--border);
-    background: white;
+    background: var(--white);
+    box-shadow: var(--shadow);
+}
+
+.risk-box h2 {
+    color: var(--navy);
+    font-size: 1.4rem;
+    margin: .5rem 0 .4rem;
+}
+
+.risk-box p {
+    color: var(--muted);
+    line-height: 1.6;
+    margin: 0;
 }
 
 .risk-low {
-    border-left: 8px solid #0F766E;
+    border-left: 8px solid var(--success);
 }
 
 .risk-medium {
-    border-left: 8px solid #B45309;
+    border-left: 8px solid var(--warning);
 }
 
 .risk-high {
-    border-left: 8px solid #B42318;
+    border-left: 8px solid var(--danger);
 }
 
 .pill {
     display: inline-block;
-    padding: .35rem .7rem;
+    padding: .3rem .65rem;
     border-radius: 999px;
     background: var(--blue-light);
     color: var(--blue);
     font-weight: 700;
-    font-size: .82rem;
+    font-size: .78rem;
     margin-right: .35rem;
     margin-bottom: .35rem;
 }
 
+/* ---- Disclaimer ---- */
 .disclaimer {
-    border-radius: 16px;
+    border-radius: 14px;
     padding: 1rem 1.1rem;
     background: #F2F7FF;
     border: 1px solid #CFE0F8;
     color: #38506F;
     line-height: 1.55;
+    margin-top: 1.4rem;
 }
 
+/* ---- Team grid ---- */
 .team-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
     gap: .75rem;
+    margin-bottom: .5rem;
 }
 
 .team-member {
-    background: white;
+    background: var(--white);
     border: 1px solid var(--border);
-    border-radius: 15px;
+    border-radius: 14px;
     padding: .9rem 1rem;
     color: var(--navy);
-    font-weight: 650;
+    font-weight: 600;
 }
 
+/* ---- Buttons ---- */
 div.stButton > button,
 div.stFormSubmitButton > button {
     border-radius: 12px;
@@ -160,9 +321,40 @@ div.stFormSubmitButton > button {
     font-weight: 700;
 }
 
+div.stButton > button:focus-visible,
+div.stFormSubmitButton > button:focus-visible {
+    outline: 3px solid var(--sky);
+    outline-offset: 2px;
+}
+
+/* ---- Metrics ---- */
 [data-testid="stMetric"] {
-    background: white;
+    background: var(--white);
     border: 1px solid var(--border);
     border-radius: 16px;
     padding: .9rem;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 640px) {
+    .hero {
+        padding: 1.9rem 1.4rem;
+        border-radius: 20px;
+    }
+
+    .card {
+        min-height: 0;
+    }
+
+    .block-container {
+        padding-top: 1.2rem;
+    }
+}
+
+/* ---- Reduced motion ---- */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: .01ms !important;
+        transition-duration: .01ms !important;
+    }
 }
